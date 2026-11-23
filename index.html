@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>RAZA OTP BOT — API Panel</title>
+<script>
+/* ════════════════════════════════════════════════════════════
+   ★ CONFIG — EDIT HERE ★
+   Apni details neeche wali lines me badlo, bas.
+   API_BASE / API_KEY : tumhari API ki URL aur key (website ke API tab se milti hai)
+   ADMIN_EMAIL / ADMIN_PASSWORD : is panel ke ADMIN login ke liye —
+   jo yahan likho ge, wahi email/password admin panel kholay ga.
+   ════════════════════════════════════════════════════════════ */
+var API_BASE = 'https://whatsapp-otp-bot.vercel.app/api/pub';
+var API_KEY = 'sk_9f9aec013a86065ff0246cd376899206f4813345c57e9d16';
+var ADMIN_EMAIL = 'hackwizardx@gmail.com';
+var ADMIN_PASSWORD = 'fame7890';
+</script>
+<style>
+
+/* ===== COMPLETE VISUAL REFRESH — layout + theme only ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --ink:#20243b;--muted:#8589a3;--line:#eceaf5;--paper:#fff;
+ --purple:#8068e9;--purple2:#a18df7;--mint:#43c9ad;--rose:#f4a5c0;
+ --bg:#f5f4fb;--shadow:0 18px 55px rgba(62,48,113,.09)
+}
+html{min-height:100%;background:var(--bg)}
+body{
+ min-height:100vh;padding:36px 16px 48px;color:var(--ink);
+ font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ background:
+  radial-gradient(ellipse at 8% 4%,rgba(190,174,255,.32),transparent 34%),
+  radial-gradient(ellipse at 95% 25%,rgba(255,205,221,.35),transparent 32%),
+  linear-gradient(145deg,#f8f7fd 0%,#f2f4fb 52%,#fdf6fa 100%);
+ -webkit-font-smoothing:antialiased;overflow-x:hidden
+}
+body:before,body:after{content:"";position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(1px)}
+body:before{width:220px;height:220px;left:-130px;bottom:8%;background:rgba(144,124,237,.09)}
+body:after{width:280px;height:280px;right:-170px;top:12%;background:rgba(246,170,198,.13)}
+.wrap{width:100%;max-width:480px;margin:0 auto;position:relative;z-index:1}
+.brand{
+ min-height:168px;position:relative;overflow:hidden;display:flex;align-items:center;gap:18px;
+ padding:27px 26px;margin:0 0 20px;border-radius:27px;
+ color:#fff;background:linear-gradient(125deg,#7664d9 0%,#927ce9 53%,#b59aef 100%);
+ box-shadow:0 17px 38px rgba(112,91,202,.25);animation:rise .55s ease both
+}
+.brand:before{content:"";position:absolute;width:230px;height:230px;border:1px solid rgba(255,255,255,.19);border-radius:50%;right:-80px;top:-120px}
+.brand:after{content:"";position:absolute;width:150px;height:150px;border:1px solid rgba(255,255,255,.16);border-radius:50%;right:-35px;bottom:-100px}
+.brand-mark{
+ flex:0 0 62px;width:62px;height:62px;display:grid;place-items:center;border-radius:21px;
+ color:#7966d7;font-size:29px;background:rgba(255,255,255,.96);
+ box-shadow:0 8px 22px rgba(52,39,117,.17);z-index:1
+}
+.brand-copy{z-index:1}
+.brand .eyebrow{font-size:9px;font-weight:850;letter-spacing:2px;color:rgba(255,255,255,.76);margin:0 0 7px}
+.brand h1{font-size:29px;line-height:1.05;letter-spacing:-1.2px;font-weight:900;color:#fff}
+.brand h1 span{color:#fce7f0}
+.brand .brand-subtitle{margin-top:10px;font-size:11px;font-weight:650;letter-spacing:.4px;color:rgba(255,255,255,.88)}
+.brand-subtitle i{display:inline-block;width:4px;height:4px;margin:0 6px 2px;border-radius:50%;background:#ffd8e8}
+.brand-orbit{position:absolute;border:1px solid rgba(255,255,255,.12);border-radius:50%;pointer-events:none}
+.orbit-one{width:105px;height:105px;right:22px;top:30px}
+.orbit-two{width:70px;height:70px;right:40px;top:48px}
+.card{
+ position:relative;padding:25px 23px;margin:0 0 16px;border:1px solid rgba(255,255,255,.95);
+ border-radius:24px;background:rgba(255,255,255,.91);box-shadow:var(--shadow);
+ backdrop-filter:blur(14px);animation:rise .55s ease both
+}
+.card h3{font-size:12px;font-weight:850;letter-spacing:1.15px;color:#55516f;margin:19px 0 14px;padding-left:11px;border-left:3px solid var(--purple)}
+.section-intro{display:flex;align-items:flex-start;gap:14px;margin:1px 0 23px}
+.mini-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;background:#f0edff;color:var(--purple);font-size:23px}
+.eyebrow{font-size:9px;letter-spacing:1.8px;font-weight:900;color:#9a91bf;margin:0 0 6px}
+.section-intro h2,.dashboard-heading h2{font-size:23px;letter-spacing:-.8px;line-height:1.15;color:#292641;font-weight:850}
+.intro-copy{font-size:11px;color:#9996ad;margin-top:6px;line-height:1.5}
+.dashboard-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 21px;padding:2px 1px 17px;border-bottom:1px solid #f0eef7}
+.live-indicator{font-size:9px;letter-spacing:1px;font-weight:900;color:#7b70aa;background:#f2efff;border:1px solid #e8e2ff;border-radius:99px;padding:8px 11px;white-space:nowrap}
+.live-indicator span{display:inline-block;width:6px;height:6px;margin:0 5px 1px 0;border-radius:50%;background:#4ac9a9;box-shadow:0 0 0 3px rgba(74,201,169,.13)}
+label{display:block;font-size:9px;letter-spacing:1.15px;color:#85819e;margin:17px 0 8px;font-weight:900}
+input,textarea{
+ width:100%;background:#faf9fe;border:1px solid #e9e6f2;color:#292641;border-radius:13px;
+ padding:14px 15px;font-size:13px;outline:none;font-family:inherit;transition:.2s ease
+}
+input::placeholder,textarea::placeholder{color:#b4b1c5}
+textarea{font-size:12px;line-height:1.65;resize:vertical}
+input:focus,textarea:focus{border-color:#a697f0;background:#fff;box-shadow:0 0 0 4px rgba(128,104,233,.10)}
+.btn{
+ width:100%;background:#f5f3fc;color:#696286;border:1px solid #eae6f6;border-radius:13px;
+ padding:13px 14px;font-size:11px;font-weight:850;letter-spacing:.5px;cursor:pointer;margin-top:14px;transition:.2s ease
+}
+.btn:hover{background:#eeebfa;border-color:#dcd5f3;transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(115deg,#8068e9,#9a83ee);color:#fff;border:0;box-shadow:0 8px 18px rgba(128,104,233,.23)}
+.btn.primary:hover{background:linear-gradient(115deg,#7259dc,#8d75e7);box-shadow:0 10px 23px rgba(128,104,233,.3);transform:translateY(-2px)}
+.btn.danger{background:#fff2f4;color:#d65d7a;border:1px solid #f7dce4;box-shadow:none}
+.btn.danger:hover{background:#ffe8ee}
+.btn.small{width:auto;padding:8px 12px;font-size:10px;margin-top:0;box-shadow:none}
+.btn:active{transform:scale(.98)}
+.tabs{display:flex;gap:5px;margin-bottom:19px;padding:5px;background:#f7f6fb;border:1px solid #efedf5;border-radius:14px}
+.tabs button{flex:1;min-width:0;background:transparent;color:#9a96ad;border:0;border-radius:10px;padding:10px 3px;font-size:9px;font-weight:900;letter-spacing:.25px;cursor:pointer;transition:.2s}
+.tabs button.on{background:#fff;color:#7663d3;box-shadow:0 3px 10px rgba(66,53,116,.09);outline:1px solid #efebfb}
+.err{color:#d65d7a;font-size:11px;margin-top:11px;min-height:15px}
+.ok{color:#279d83;font-size:11px;margin-top:11px;min-height:15px}
+.hidden{display:none!important}
+.pill{display:inline-block;padding:5px 10px;border-radius:99px;font-size:9px;font-weight:900;letter-spacing:.4px;background:#f2f0f7;color:#88839e;border:1px solid #e9e6f0}
+.pill.green{background:#e9f9f3;color:#249a7d;border-color:#d3f1e6}
+.pill.red{background:#fff0f3;color:#d65d7a;border-color:#f8dbe3}
+.codebox{background:linear-gradient(145deg,#f1edff,#fdf5fa);border:1px solid #e2dafb;border-radius:17px;text-align:center;padding:24px 10px;margin-top:17px}
+.codebox strong{font-size:32px;letter-spacing:6px;color:#7663d3;font-family:monospace;text-shadow:0 3px 16px rgba(128,104,233,.17)}
+.codebox small{display:block;color:#9993b0;font-size:9px;letter-spacing:.6px;margin-top:10px;line-height:1.8}
+.kv{font-size:12px;color:#9995aa;margin-top:8px;word-break:break-all}
+.kv b{color:#3d3956;font-weight:800}
+.rowflex{display:flex;gap:8px;align-items:stretch}
+.rowflex input{flex:1;min-width:0}
+.rowflex .btn{width:auto;margin-top:0;white-space:nowrap}
+.style-item,.user-row{border:1px solid #eeebf5;border-radius:15px;padding:14px;margin-top:10px;background:linear-gradient(145deg,#fff,#faf9fe);transition:.2s}
+.style-item:hover{transform:translateY(-2px);border-color:#dcd4fa;box-shadow:0 8px 20px rgba(62,48,113,.07)}
+.style-item .nm{font-weight:850;font-size:12px;color:#4d4868;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.style-item pre{white-space:pre-wrap;word-break:break-word;font-size:11px;line-height:1.6;color:#706b86;background:#f8f7fc;border:1px solid #efedf5;border-radius:10px;padding:11px;margin-top:10px;max-height:170px;overflow:auto}
+.style-item .acts{display:flex;gap:8px;margin-top:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.chips button{background:#f3f0ff;border:1px solid #e5defd;color:#7966d8;border-radius:8px;padding:7px 9px;font-size:10px;font-family:monospace;cursor:pointer;transition:.2s}
+.chips button:hover{background:#e9e3ff}
+.user-row .nm{font-weight:850;font-size:12px;color:#4d4868}
+.user-row .em{font-size:11px;color:#9995aa;word-break:break-all;margin-top:5px}
+.note{font-size:10.5px;color:#9995aa;line-height:1.7;margin-top:11px}
+.foot{text-align:center;color:#aaa5bc;font-size:9px;font-weight:850;letter-spacing:1.5px;margin-top:20px}
+::selection{background:#e4ddff;color:#51419e}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid rgba(128,104,233,.45);outline-offset:2px}
+.style-item pre::-webkit-scrollbar{width:5px;height:5px}
+.style-item pre::-webkit-scrollbar-thumb{background:#d5cfee;border-radius:99px}
+@media(prefers-reduced-motion:reduce){.brand,.card{animation:none}*{transition:none!important}}
+@media(max-width:380px){
+ body{padding:20px 10px 30px}.brand{min-height:145px;padding:22px 18px;gap:13px;border-radius:22px}
+ .brand-mark{width:52px;height:52px;flex-basis:52px;border-radius:17px}.brand h1{font-size:25px}
+ .card{padding:20px 15px;border-radius:20px}.tabs button{font-size:8px}.section-intro h2,.dashboard-heading h2{font-size:21px}
+}
+
+
+/* ===== SECOND COMPLETE UI PASS: soft aqua + peach workspace ===== */
+:root{
+ --ink:#203b3b;--muted:#718b88;--line:#dcece8;--paper:#ffffff;
+ --purple:#268f82;--purple2:#56b8a8;--mint:#73cdb8;--rose:#f4a98f;
+ --bg:#f1f8f5;--shadow:0 20px 60px rgba(39,104,91,.10)
+}
+html{background:#f1f8f5}
+body{
+ padding:30px 18px 55px;color:#203b3b;
+ background:
+ radial-gradient(ellipse at 4% 2%,rgba(129,211,190,.27),transparent 34%),
+ radial-gradient(ellipse at 96% 8%,rgba(255,190,164,.28),transparent 31%),
+ linear-gradient(145deg,#f5fbf8 0%,#edf7f4 52%,#fff7f2 100%);
+}
+.wrap{max-width:760px}
+.brand{
+ min-height:190px;padding:34px 38px;margin-bottom:22px;border-radius:30px;
+ background:linear-gradient(115deg,#176f68 0%,#269989 48%,#79cdb5 100%);
+ box-shadow:0 20px 45px rgba(31,133,116,.22)
+}
+.brand-mark{
+ width:74px;height:74px;flex-basis:74px;border-radius:25px;
+ color:#19796e;background:linear-gradient(145deg,#fff,#e5fff5);
+ font-size:34px;box-shadow:0 10px 25px rgba(15,75,66,.18)
+}
+.brand h1{font-size:35px;letter-spacing:-1.5px}
+.brand h1 span{color:#ffe2d2}
+.brand .eyebrow{color:#d0f4e9}
+.brand .brand-subtitle{font-size:12px;letter-spacing:.7px}
+.brand-orbit{border-color:rgba(255,255,255,.2)}
+.card{
+ padding:30px;margin-bottom:20px;border-radius:27px;
+ border:1px solid rgba(255,255,255,.96);
+ box-shadow:0 16px 48px rgba(37,103,91,.09);
+ background:rgba(255,255,255,.94)
+}
+.section-intro{align-items:center;margin-bottom:25px}
+.mini-icon{width:52px;height:52px;flex-basis:52px;border-radius:18px;background:#e6f7f1;color:#238e7e;font-size:27px}
+.eyebrow{color:#6ca99d}
+.section-intro h2,.dashboard-heading h2{color:#1f4541;font-size:27px}
+.intro-copy{color:#829995;font-size:12px}
+.dashboard-heading{padding-bottom:20px;border-color:#e7f0ed}
+.live-indicator{color:#247f72;background:#e9f8f2;border-color:#d6eee6}
+.live-indicator span{background:#35b895;box-shadow:0 0 0 4px rgba(53,184,149,.13)}
+.tabs{
+ gap:7px;padding:6px;margin-bottom:25px;border-radius:16px;
+ background:#f1f8f5;border-color:#e4f0eb
+}
+.tabs button{
+ min-height:42px;border-radius:12px;color:#819893;
+ font-size:10px;letter-spacing:.65px
+}
+.tabs button.on{
+ color:#197c70;background:#fff;outline:1px solid #d9eee6;
+ box-shadow:0 5px 14px rgba(35,111,97,.10)
+}
+label{
+ margin:21px 0 9px;color:#547d75;font-size:10px;letter-spacing:1px
+}
+input,textarea{
+ background:#f8fcfa;border:1.5px solid #e0eee8;color:#24443f;
+ border-radius:15px;padding:15px 16px;font-size:13px
+}
+input::placeholder,textarea::placeholder{color:#a9bbb5}
+input:focus,textarea:focus{
+ border-color:#69bda9;background:#fff;box-shadow:0 0 0 4px rgba(66,174,148,.12)
+}
+.btn{
+ min-height:45px;margin-top:15px;border-radius:14px;
+ background:#edf7f3;color:#397f72;border:1px solid #dceee7;
+ font-size:10px;letter-spacing:.8px
+}
+.btn:hover{background:#e3f3ed;border-color:#c8e7db}
+.btn.primary{
+ background:linear-gradient(110deg,#218d7e,#54b99f);
+ box-shadow:0 9px 20px rgba(36,143,125,.2)
+}
+.btn.primary:hover{background:linear-gradient(110deg,#187c70,#42a98f);box-shadow:0 12px 25px rgba(36,143,125,.25)}
+.btn.danger{background:#fff1ed;color:#c66c57;border-color:#f6ddd5}
+.btn.danger:hover{background:#ffe8e1}
+.btn.small{min-height:34px}
+.kv{
+ display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;
+ background:#f5faf7;border:1px solid #e7f1ec;border-radius:11px;
+ padding:9px 12px;margin:4px 5px 5px 0;color:#75918a;font-size:11px
+}
+.kv b{color:#28534b}
+#pairForm{
+ margin-top:23px;padding:22px;border:1px solid #dcefe7;border-radius:20px;
+ background:linear-gradient(135deg,#f1faf6,#fff8f3)
+}
+#pairForm:before{
+ content:"01  /  CONNECT YOUR DEVICE";display:block;color:#5b9b8e;
+ font-size:9px;font-weight:900;letter-spacing:1.5px;margin-bottom:4px
+}
+#pairForm label{margin-top:13px}
+#btnPair{min-height:51px;font-size:11px}
+.codebox{
+ margin-top:20px;padding:28px 16px;border-radius:20px;
+ background:linear-gradient(135deg,#e9f8f2,#fff4ed);border:1px solid #d8eee4
+}
+.codebox strong{color:#218b7b;font-size:37px;letter-spacing:8px}
+.codebox small{color:#71938a;max-width:390px;margin:12px auto 0}
+#secChannels,#secStyles,#secAdmin,#secPair{animation:rise .28s ease both}
+#secChannels{
+ padding:20px;border:1px solid #e4f0eb;border-radius:20px;background:#fbfdfc
+}
+#secChannels label:first-child{margin-top:0}
+#secChannels .rowflex{align-items:stretch}
+#secChannels .rowflex input{min-width:0}
+#secChannels .rowflex .btn{min-width:100px}
+#btnSaveChannels{min-height:49px}
+#secStyles>h3,#admLogin h3,#admPanel h3{
+ margin:24px 0 15px;padding:0;border:0;color:#286f64;
+ font-size:12px;letter-spacing:1.2px
+}
+#styleList{padding:15px;border:1px solid #e3f0ea;border-radius:19px;background:#f9fcfa}
+.style-item,.user-row{
+ border:1px solid #e2eee8;border-radius:16px;background:#fff;padding:16px;
+ box-shadow:0 5px 16px rgba(37,103,91,.04)
+}
+.style-item .nm,.user-row .nm{color:#315e55}
+.style-item pre{
+ background:#f5faf7;border-color:#e5f0eb;color:#607e75;border-radius:12px
+}
+.chips button{background:#eaf7f1;border-color:#d8eee4;color:#278b79;border-radius:10px}
+.chips button:hover{background:#dff2e9}
+#stPreview{
+ background:#f3faf6!important;border-color:#dcefe5!important;border-radius:14px!important;color:#426e62
+}
+#secAdmin{
+ padding:20px;border:1px solid #e4f0eb;border-radius:20px;background:#fbfdfc
+}
+#admLogin,#admPanel{padding:19px;border-radius:17px;background:#f5faf7;border:1px solid #e6f1eb}
+#admLogin h3,#admPanel h3{margin-top:0}
+#btnAdmLogin,#btnAdmRefresh,#btnAdmLogout{min-height:47px}
+.note{color:#819891;font-size:10px}
+.err{color:#c96861}.ok{color:#258e76}
+.pill{background:#f1f5f3;color:#78908a;border-color:#e1ebe6}
+.pill.green{background:#e6f7ef;color:#21886f;border-color:#d0eddf}
+.pill.red{background:#fff0eb;color:#c76d59;border-color:#f5dcd2}
+.foot{color:#8ca9a1;letter-spacing:1.8px;margin-top:25px}
+@media(min-width:700px){
+ body{padding-top:42px}
+ .brand{margin-bottom:25px}
+ .card{padding:34px}
+ .dashboard-card{min-height:450px}
+}
+@media(max-width:520px){
+ body{padding:17px 11px 35px}
+ .wrap{max-width:100%}
+ .brand{min-height:150px;padding:23px 20px;gap:15px;border-radius:24px}
+ .brand-mark{width:57px;height:57px;flex-basis:57px;border-radius:19px;font-size:27px}
+ .brand h1{font-size:27px}
+ .card{padding:21px 16px;border-radius:22px}
+ .section-intro h2,.dashboard-heading h2{font-size:23px}
+ .tabs{gap:3px}
+ .tabs button{font-size:8px;padding:10px 2px}
+ #pairForm,#secChannels,#secStyles,#secAdmin{padding:15px}
+ .kv{font-size:10px;padding:8px}
+ .codebox strong{font-size:31px;letter-spacing:6px}
+ #secChannels .rowflex{flex-direction:column}
+ #secChannels .rowflex .btn{width:100%;min-height:43px}
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <div class="brand-mark" aria-hidden="true"><span>✦</span></div>
+    <div class="brand-copy">
+      <p class="eyebrow">YOUR PERSONAL CONTROL CENTER</p>
+      <h1>ALI <span>RAZA</span></h1>
+      <p class="brand-subtitle">WhatsApp OTP <i></i> Bot Panel</p>
+    </div>
+    <div class="brand-orbit orbit-one"></div>
+    <div class="brand-orbit orbit-two"></div>
+  </header>
+
+  <!-- ═══ AUTH ═══ -->
+  <div class="card auth-card" id="authCard">
+    <div class="section-intro">
+      <span class="mini-icon">✧</span>
+      <div>
+        <p class="eyebrow">WELCOME BACK</p>
+        <h2>Let’s get you in.</h2>
+        <p class="intro-copy">Sign in to manage your WhatsApp bot.</p>
+      </div>
+    </div>
+    <div class="tabs">
+      <button id="tabLogin" class="on" type="button">LOGIN</button>
+      <button id="tabRegister" type="button">REGISTER</button>
+    </div>
+    <div id="nameWrap" class="hidden">
+      <label>FULL NAME</label>
+      <input id="fName" placeholder="Your name" autocomplete="name">
+    </div>
+    <label>EMAIL</label>
+    <input id="fEmail" type="email" placeholder="you@example.com" autocomplete="email">
+    <label>PASSWORD</label>
+    <input id="fPass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn primary" id="btnAuth" type="button">LOGIN</button>
+    <div class="err" id="authErr"></div>
+    <div class="ok" id="authOk"></div>
+  </div>
+
+  <!-- ═══ MAIN PANEL ═══ -->
+  <div class="card dashboard-card hidden" id="panelCard">
+    <div class="dashboard-heading">
+      <div>
+        <p class="eyebrow">WORKSPACE</p>
+        <h2>Your dashboard</h2>
+        <p class="intro-copy">Everything you need, in one place.</p>
+      </div>
+      <div class="live-indicator"><span></span> PANEL</div>
+    </div>
+    <div class="tabs">
+      <button id="ptPair" class="on" type="button">PAIR</button>
+      <button id="ptChannels" type="button">CHANNELS</button>
+      <button id="ptStyles" type="button">STYLES</button>
+      <button id="ptAdmin" type="button">ADMIN</button>
+    </div>
+
+    <!-- ── PAIR ── -->
+    <div id="secPair">
+      <div class="kv">Name: <b id="accName">—</b></div>
+      <div class="kv">Email: <b id="accEmail">—</b></div>
+      <div class="kv" style="margin-top:10px">WhatsApp: <span class="pill" id="waPill">NOT PAIRED</span></div>
+      <div class="kv" id="accPhone"></div>
+
+      <div id="pairForm">
+        <label>WHATSAPP NUMBER (WITH COUNTRY CODE)</label>
+        <input id="fPhone" inputmode="numeric" placeholder="923001234567">
+        <button class="btn primary" id="btnPair" type="button">PAIR NUMBER</button>
+      </div>
+
+      <div class="codebox hidden" id="codeBox">
+        <strong id="codeText">—</strong>
+        <small>OPEN WHATSAPP → LINKED DEVICES → LINK WITH PHONE NUMBER → ENTER THIS CODE</small>
+      </div>
+
+      <div class="err" id="pairErr"></div>
+      <div class="ok" id="pairOk"></div>
+
+      <button class="btn danger hidden" id="btnUnpair" type="button">UNPAIR NUMBER</button>
+    </div>
+
+    <!-- ── CHANNELS ── -->
+    <div id="secChannels" class="hidden">
+      <label>OTP CHANNEL ID (NEWSLETTER JID)</label>
+      <input id="chOtpJid" placeholder="120363xxxxxxxxxx@newsletter">
+      <label>CHANNEL LINK SE JID NIKALO</label>
+      <div class="rowflex">
+        <input id="chLink" placeholder="https://whatsapp.com/channel/xxxx">
+        <button class="btn" id="btnJid" type="button">GET JID</button>
+      </div>
+      <label>NUMBERS CHANNEL LINK (OTP CARD PAR)</label>
+      <input id="chNumbers" placeholder="https://whatsapp.com/channel/...">
+      <label>MAIN CHANNEL LINK (OTP CARD PAR)</label>
+      <input id="chMain" placeholder="https://whatsapp.com/channel/...">
+      <label>POWERED BY (FOOTER NAME)</label>
+      <input id="chPowered" placeholder="HACK WIZARD X">
+      <button class="btn primary" id="btnSaveChannels" type="button">SAVE SETTINGS</button>
+      <div class="err" id="chErr"></div>
+      <div class="ok" id="chOk"></div>
+      <p class="note">Note: JID nikalne ke liye pehle apna number pair hona chahiye (backend tumhare hi connected number se JID nikalta hai).</p>
+    </div>
+
+    <!-- ── STYLES ── -->
+    <div id="secStyles" class="hidden">
+      <div id="styleList"><p class="note">Loading styles…</p></div>
+      <h3 style="margin-top:22px">ADD YOUR OWN STYLE</h3>
+      <label>STYLE NAME</label>
+      <input id="stName" placeholder="My Style">
+      <label>TEMPLATE — {otp} lazmi hai</label>
+      <textarea id="stTpl" rows="5" placeholder="🔐 Your OTP is {otp} — {service}"></textarea>
+      <div class="chips" id="tokenChips"></div>
+      <div class="rowflex" style="margin-top:14px">
+        <button class="btn" id="btnPreview" type="button" style="flex:1">PREVIEW</button>
+        <button class="btn primary" id="btnSaveStyle" type="button" style="flex:1">SAVE STYLE</button>
+      </div>
+      <pre id="stPreview" class="hidden" style="white-space:pre-wrap;word-break:break-word;font-size:12.5px;line-height:1.6;background:#fbfcfd;border:1px solid #e2e8ee;border-radius:9px;padding:12px;margin-top:12px"></pre>
+      <div class="err" id="stErr"></div>
+      <div class="ok" id="stOk"></div>
+    </div>
+
+    <!-- ── ADMIN ── -->
+    <div id="secAdmin" class="hidden">
+      <div id="admLogin">
+        <h3>ADMIN LOGIN</h3>
+        <label>ADMIN EMAIL</label>
+        <input id="admEmail" type="email" placeholder="admin@example.com">
+        <label>ADMIN PASSWORD</label>
+        <input id="admPass" type="password" placeholder="••••••••">
+        <button class="btn primary" id="btnAdmLogin" type="button">OPEN ADMIN PANEL</button>
+        <div class="err" id="admErr"></div>
+        <p class="note">Admin email &amp; password is file ke bilkul top par CONFIG me likhe hote hain — wahan apna email/password set karo. Jo bhi ye file khol sakta hai wo password dekh sakta hai, is liye file ko private rakho.</p>
+      </div>
+      <div id="admPanel" class="hidden">
+        <h3>USERS — REGISTERED VIA YOUR API</h3>
+        <div id="admUsers"><p class="note">Loading…</p></div>
+        <div class="rowflex" style="margin-top:14px">
+          <button class="btn" id="btnAdmRefresh" type="button" style="flex:1">REFRESH</button>
+          <button class="btn danger" id="btnAdmLogout" type="button" style="flex:1">ADMIN LOGOUT</button>
+        </div>
+        <div class="err" id="admErr2"></div>
+      </div>
+    </div>
+
+    <button class="btn" id="btnLogout" type="button">LOGOUT</button>
+  </div>
+
+  <div class="foot">POWERED BY ALI RAZA OTP BOT</div>
+</div>
+
+<script>
+var token = localStorage.getItem('syedApiToken') || '';
+var mode = 'login';
+var pollTimer = null;
+var stylesLoaded = false, channelsLoaded = false;
+
+function $(id) { return document.getElementById(id); }
+function msg(id, text) { var e = $(id); if (e) e.textContent = text || ''; }
+
+function api(path, body, useToken) {
+  var headers = { 'Content-Type': 'application/json' };
+  if (useToken && token) headers['Authorization'] = 'Bearer ' + token;
+  var opts = { method: body ? 'POST' : 'GET', headers: headers };
+  if (body) opts.body = JSON.stringify(body);
+  return fetch(API_BASE + path, opts).then(function (r) {
+    return r.json().catch(function () { return { error: 'Server error (' + r.status + ')' }; }).then(function (d) {
+      if (!r.ok) throw new Error(d.error || ('Request failed (' + r.status + ')'));
+      return d;
+    });
+  });
+}
+
+/* ───────── tabs ───────── */
+function setMode(m) {
+  mode = m;
+  $('tabLogin').classList.toggle('on', m === 'login');
+  $('tabRegister').classList.toggle('on', m === 'register');
+  $('nameWrap').classList.toggle('hidden', m === 'login');
+  $('btnAuth').textContent = m === 'login' ? 'LOGIN' : 'CREATE ACCOUNT';
+  msg('authErr', ''); msg('authOk', '');
+}
+$('tabLogin').onclick = function () { setMode('login'); };
+$('tabRegister').onclick = function () { setMode('register'); };
+
+function showSec(name) {
+  var secs = { Pair: 'secPair', Channels: 'secChannels', Styles: 'secStyles', Admin: 'secAdmin' };
+  for (var k in secs) {
+    $(secs[k]).classList.toggle('hidden', k !== name);
+    $('pt' + k).classList.toggle('on', k === name);
+  }
+  if (name === 'Channels' && !channelsLoaded) loadChannels();
+  if (name === 'Styles' && !stylesLoaded) loadStyles();
+}
+$('ptPair').onclick = function () { showSec('Pair'); };
+$('ptChannels').onclick = function () { showSec('Channels'); };
+$('ptStyles').onclick = function () { showSec('Styles'); };
+$('ptAdmin').onclick = function () { showSec('Admin'); };
+
+/* ───────── auth ───────── */
+$('btnAuth').onclick = function () {
+  msg('authErr', ''); msg('authOk', '');
+  var email = $('fEmail').value.trim(), pass = $('fPass').value;
+  if (!email || !pass) { msg('authErr', 'Email and password are required.'); return; }
+  var path, body;
+  if (mode === 'register') {
+    var name = $('fName').value.trim();
+    if (!name) { msg('authErr', 'Please enter your name.'); return; }
+    path = '/register'; body = { apiKey: API_KEY, name: name, email: email, password: pass };
+  } else {
+    path = '/login'; body = { apiKey: API_KEY, email: email, password: pass };
+  }
+  $('btnAuth').textContent = 'PLEASE WAIT…';
+  api(path, body, false).then(function (d) {
+    token = d.token || '';
+    if (!token) throw new Error('No token received.');
+    localStorage.setItem('syedApiToken', token);
+    showPanel(d.user);
+  }).catch(function (e) {
+    msg('authErr', e.message);
+  }).finally(function () {
+    $('btnAuth').textContent = mode === 'login' ? 'LOGIN' : 'CREATE ACCOUNT';
+  });
+};
+
+function userObj(u) { return (u && u.user) ? u.user : (u || {}); }
+function accObj(u) { return (u && u.account) ? u.account : (u || {}); }
+
+function showPanel(u) {
+  $('authCard').classList.add('hidden');
+  $('panelCard').classList.remove('hidden');
+  renderMe(u);
+  startPoll();
+}
+function renderMe(u) {
+  if (!u) return;
+  var a = accObj(u), s = userObj(u);
+  if (a.name) $('accName').textContent = a.name;
+  if (a.email) $('accEmail').textContent = a.email;
+  var pill = $('waPill');
+  if (s.isConnected) {
+    pill.textContent = 'CONNECTED'; pill.classList.add('green'); pill.classList.remove('red');
+    $('accPhone').innerHTML = 'Number: <b>' + (s.phone || '') + '</b>';
+    $('pairForm').classList.add('hidden');
+    $('codeBox').classList.add('hidden');
+    $('btnUnpair').classList.remove('hidden');
+  } else if (s.waStatus === 'pairing' || s.pairingCode) {
+    pill.textContent = 'PAIRING…'; pill.classList.remove('green');
+    $('accPhone').innerHTML = s.phone ? ('Number: <b>' + s.phone + '</b>') : '';
+    $('pairForm').classList.add('hidden');
+    $('btnUnpair').classList.remove('hidden');
+    if (s.pairingCode) {
+      $('codeText').textContent = s.pairingCode;
+      $('codeBox').classList.remove('hidden');
+    }
+  } else {
+    pill.textContent = 'NOT PAIRED'; pill.classList.remove('green');
+    $('accPhone').textContent = '';
+    $('pairForm').classList.remove('hidden');
+    $('codeBox').classList.add('hidden');
+    $('btnUnpair').classList.add('hidden');
+  }
+}
+function refreshMe() {
+  if (!token) return;
+  api('/me', null, true).then(function (d) { renderMe(d.user); }).catch(function () {});
+}
+function startPoll() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(refreshMe, 3000);
+}
+
+$('btnPair').onclick = function () {
+  msg('pairErr', ''); msg('pairOk', '');
+  var phone = $('fPhone').value.replace(/[^0-9]/g, '');
+  if (phone.length < 10) { msg('pairErr', 'Enter a valid number with country code.'); return; }
+  $('btnPair').textContent = 'PLEASE WAIT…';
+  api('/pair', { token: token, phone: phone }, false).then(function () {
+    msg('pairOk', 'Pairing started — your code will appear here in a few seconds.');
+    refreshMe();
+  }).catch(function (e) { msg('pairErr', e.message); })
+    .finally(function () { $('btnPair').textContent = 'PAIR NUMBER'; });
+};
+
+$('btnUnpair').onclick = function () {
+  if (!confirm('Unpair your WhatsApp number?')) return;
+  api('/unpair', { token: token }, false).then(function () {
+    msg('pairOk', 'Number unpaired.');
+    refreshMe();
+  }).catch(function (e) { msg('pairErr', e.message); });
+};
+
+$('btnLogout').onclick = function () {
+  token = '';
+  localStorage.removeItem('syedApiToken');
+  if (pollTimer) clearInterval(pollTimer);
+  $('panelCard').classList.add('hidden');
+  $('authCard').classList.remove('hidden');
+};
+
+/* ───────── channels ───────── */
+function loadChannels() {
+  api('/settings', null, true).then(function (d) {
+    var s = d.settings || {};
+    $('chOtpJid').value = s.otpChannel || '';
+    $('chNumbers').value = s.numbersChannel || '';
+    $('chMain').value = s.mainChannel || '';
+    $('chPowered').value = s.poweredBy || '';
+    channelsLoaded = true;
+  }).catch(function (e) { msg('chErr', e.message); });
+}
+$('btnJid').onclick = function () {
+  msg('chErr', ''); msg('chOk', '');
+  var link = $('chLink').value.trim();
+  if (!link) { msg('chErr', 'Paste a channel link first.'); return; }
+  $('btnJid').textContent = 'WAIT…';
+  api('/newsletter-jid', { token: token, link: link }, false).then(function (d) {
+    $('chOtpJid').value = d.jid || '';
+    msg('chOk', 'JID mil gaya — ab SAVE SETTINGS kar do.');
+  }).catch(function (e) { msg('chErr', e.message); })
+    .finally(function () { $('btnJid').textContent = 'GET JID'; });
+};
+$('btnSaveChannels').onclick = function () {
+  msg('chErr', ''); msg('chOk', '');
+  api('/settings', {
+    token: token,
+    otpChannel: $('chOtpJid').value.trim(),
+    numbersChannel: $('chNumbers').value.trim(),
+    mainChannel: $('chMain').value.trim(),
+    poweredBy: $('chPowered').value.trim()
+  }, false).then(function () {
+    msg('chOk', 'Settings saved ✓');
+  }).catch(function (e) { msg('chErr', e.message); });
+};
+
+/* ───────── styles ───────── */
+var TOKENS = ['{otp}', '{service}', '{number}', '{masked}', '{flag}', '{country}', '{message}', '{brand}', '{channel}', '{mainchannel}'];
+$('tokenChips').innerHTML = TOKENS.map(function (t) { return '<button type="button" data-tok="' + t + '">' + t + '</button>'; }).join('');
+Array.prototype.forEach.call($('tokenChips').querySelectorAll('button'), function (b) {
+  b.onclick = function () {
+    var ta = $('stTpl'), t = b.getAttribute('data-tok');
+    var s = ta.selectionStart || ta.value.length;
+    ta.value = ta.value.slice(0, s) + t + ta.value.slice(ta.selectionEnd || s);
+    ta.focus();
+  };
+});
+
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+function loadStyles() {
+  api('/styles', null, true).then(function (d) {
+    stylesLoaded = true;
+    var active = d.activeStyle || 'box';
+    var html = '';
+    (d.styles || []).forEach(function (st) {
+      html += '<div class="style-item"><div class="nm"><span>' + esc(st.name) + '</span>' +
+        (active === st.id ? '<span class="pill green">ACTIVE</span>' : '<button class="btn small" data-select="' + st.id + '" type="button">SELECT</button>') +
+        '</div><pre>' + esc(st.preview) + '</pre></div>';
+    });
+    (d.customStyles || []).forEach(function (st) {
+      html += '<div class="style-item"><div class="nm"><span>' + esc(st.name) + ' (yours)</span>' +
+        (active === st.id ? '<span class="pill green">ACTIVE</span>' : '<button class="btn small" data-select="' + st.id + '" type="button">SELECT</button>') +
+        '</div><pre>' + esc(st.template) + '</pre>' +
+        '<div class="acts"><button class="btn small danger" data-del="' + st.id + '" type="button" style="background:#fdecec;color:#c0392b;border:1px solid #f3c1c1;border-radius:9px;font-weight:700;cursor:pointer">DELETE</button></div></div>';
+    });
+    if (!html) html = '<p class="note">No styles found.</p>';
+    $('styleList').innerHTML = html;
+    Array.prototype.forEach.call($('styleList').querySelectorAll('[data-select]'), function (b) {
+      b.onclick = function () { selectStyle(b.getAttribute('data-select')); };
+    });
+    Array.prototype.forEach.call($('styleList').querySelectorAll('[data-del]'), function (b) {
+      b.onclick = function () {
+        if (!confirm('Delete this style?')) return;
+        api('/styles/custom/delete', { token: token, id: b.getAttribute('data-del') }, false)
+          .then(function () { loadStyles(); msg('stOk', 'Style deleted.'); })
+          .catch(function (e) { msg('stErr', e.message); });
+      };
+    });
+  }).catch(function (e) { $('styleList').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; });
+}
+function selectStyle(id) {
+  api('/settings', { token: token, otpStyle: id }, false).then(function () {
+    msg('stOk', 'Style selected ✓');
+    loadStyles();
+  }).catch(function (e) { msg('stErr', e.message); });
+}
+$('btnPreview').onclick = function () {
+  msg('stErr', '');
+  api('/styles/preview', { token: token, template: $('stTpl').value }, false).then(function (d) {
+    var p = $('stPreview');
+    p.textContent = d.preview || '';
+    p.classList.remove('hidden');
+  }).catch(function (e) { msg('stErr', e.message); });
+};
+$('btnSaveStyle').onclick = function () {
+  msg('stErr', ''); msg('stOk', '');
+  api('/styles/custom', { token: token, name: $('stName').value.trim(), template: $('stTpl').value }, false).then(function () {
+    msg('stOk', 'Style saved aur select ho gaya ✓');
+    $('stName').value = '';
+    stylesLoaded = false;
+    loadStyles();
+  }).catch(function (e) { msg('stErr', e.message); });
+};
+
+/* ───────── admin ───────── */
+function admIsIn() { return sessionStorage.getItem('syedAdm') === '1'; }
+function admRender() {
+  $('admLogin').classList.toggle('hidden', admIsIn());
+  $('admPanel').classList.toggle('hidden', !admIsIn());
+  if (admIsIn()) loadAdmUsers();
+}
+$('btnAdmLogin').onclick = function () {
+  msg('admErr', '');
+  if ($('admEmail').value.trim().toLowerCase() === String(ADMIN_EMAIL).toLowerCase() && $('admPass').value === String(ADMIN_PASSWORD)) {
+    sessionStorage.setItem('syedAdm', '1');
+    admRender();
+  } else {
+    msg('admErr', 'Wrong admin email or password.');
+  }
+};
+$('btnAdmLogout').onclick = function () {
+  sessionStorage.removeItem('syedAdm');
+  admRender();
+};
+$('btnAdmRefresh').onclick = function () { loadAdmUsers(); };
+function loadAdmUsers() {
+  api('/admin/users', { apiKey: API_KEY }, false).then(function (d) {
+    var us = d.users || [];
+    if (!us.length) { $('admUsers').innerHTML = '<p class="note">Abhi tak tumhari API se koi user register nahi hua.</p>'; return; }
+    $('admUsers').innerHTML = us.map(function (u) {
+      var st = u.banned ? '<span class="pill red">BANNED</span>' : (u.isConnected ? '<span class="pill green">CONNECTED</span>' : '<span class="pill">NOT PAIRED</span>');
+      return '<div class="user-row"><div class="nm">' + esc(u.name) + ' &nbsp;' + st + '</div>' +
+        '<div class="em">' + esc(u.email) + (u.phone ? (' • ' + esc(u.phone)) : '') + '</div>' +
+        '<div class="acts" style="display:flex;gap:8px;margin-top:9px"><button class="btn small" data-ban="' + u.id + '" data-banned="' + (u.banned ? '0' : '1') + '" type="button">' + (u.banned ? 'UNBAN' : 'BAN') + '</button></div></div>';
+    }).join('');
+    Array.prototype.forEach.call($('admUsers').querySelectorAll('[data-ban]'), function (b) {
+      b.onclick = function () {
+        api('/admin/ban', { apiKey: API_KEY, id: b.getAttribute('data-ban'), banned: b.getAttribute('data-banned') === '1' }, false)
+          .then(function () { loadAdmUsers(); })
+          .catch(function (e) { msg('admErr2', e.message); });
+      };
+    });
+  }).catch(function (e) { msg('admErr2', e.message); });
+};
+
+/* ───────── boot ───────── */
+if (token) {
+  api('/me', null, true).then(function (d) { showPanel(d.user); admRender(); })
+    .catch(function () { token = ''; localStorage.removeItem('syedApiToken'); });
+}
+</script>
+</body>
+</html>
